@@ -55,3 +55,6 @@ app.*.map.json
 
 # Generated build output
 **/build/
+
+# Local release notes
+/CHANGELOG.md

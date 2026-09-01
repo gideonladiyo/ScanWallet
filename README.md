@@ -151,5 +151,4 @@ Users can download the APK from the repository's **Releases** page.
 
 ## Progress
 
-The initial implementation is complete; see [`CHANGELOG.md`](CHANGELOG.md) for
-the current release summary.
+The initial implementation is complete. Release notes are maintained in the GitHub Releases page.
