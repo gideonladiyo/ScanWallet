@@ -17,10 +17,8 @@ sedang tidak terhubung ke internet.
 ## Download
 
 Versi Android yang sudah dirilis tersedia di halaman
-[Releases](https://github.com/USERNAME/REPOSITORY/releases). Pilih versi terbaru,
+[Releases](https://github.com/gideonladiyo/ScanWallet/releases). Pilih versi terbaru,
 lalu download file APK untuk memasangnya di perangkat Android.
-
-> Tautan di atas akan aktif setelah repository ini dibuat di GitHub.
 
 ## Cara mulai
 
