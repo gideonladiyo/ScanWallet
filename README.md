@@ -1,153 +1,79 @@
 # ScanWallet
 
-ScanWallet is an offline-first Flutter finance tracker with on-device receipt
-OCR, multi-account wallets, categories, and an analytics dashboard. Supabase
-provides optional cloud sync, authentication, PostgreSQL, and row-level
-security (RLS).
+ScanWallet membantu kamu mencatat dan memahami keuangan harian dengan lebih
+praktis. Foto struk, rapikan detail transaksi, dan tetap bisa mencatat meski
+sedang tidak terhubung ke internet.
 
-## Features
+## Apa yang bisa dilakukan
 
-- Receipt scanning with on-device ML Kit OCR
-- Offline transaction queue with automatic sync when connectivity returns
-- Multiple accounts, categories, balances, and analytics
-- Email/password and Google sign-in through Supabase Auth
-- Supabase triggers for default data and account balance updates
+- Scan struk dan bukti pembayaran dari kamera atau galeri.
+- Mencatat pemasukan dan pengeluaran secara manual.
+- Mengatur beberapa dompet atau rekening dalam satu aplikasi.
+- Mengelompokkan transaksi berdasarkan kategori.
+- Melihat saldo, transaksi terbaru, dan ringkasan pengeluaran.
+- Tetap mencatat saat offline; data akan disinkronkan saat koneksi kembali.
+- Masuk dengan email atau Google.
 
-## Requirements
+## Download
+
+Versi Android yang sudah dirilis tersedia di halaman
+[Releases](https://github.com/USERNAME/REPOSITORY/releases). Pilih versi terbaru,
+lalu download file APK untuk memasangnya di perangkat Android.
+
+> Tautan di atas akan aktif setelah repository ini dibuat di GitHub.
+
+## Cara mulai
+
+1. Install APK dari halaman Releases.
+2. Buat akun atau masuk dengan akun yang sudah ada.
+3. Tambahkan rekening/dompet yang ingin dipakai.
+4. Scan struk atau tambahkan transaksi secara manual.
+5. Periksa ringkasan keuanganmu dari halaman dashboard.
+
+## Versi dan catatan rilis
+
+Setiap versi aplikasi dibuat sebagai GitHub Release, misalnya `v1.0.0` atau
+`v1.1.0`. Catatan rilis menjelaskan perubahan yang terlihat atau dirasakan oleh
+pengguna. File APK untuk versi tersebut tersedia di halaman release yang sama.
+
+## Untuk developer
+
+<details>
+<summary>Buka panduan setup project</summary>
+
+### Persyaratan
 
 - Flutter 3.32+ / Dart 3.8+
-- Android Studio (Android) or Xcode (iOS)
-- A [Supabase](https://supabase.com) project
+- Android Studio untuk Android atau Xcode untuk iOS
+- Project Supabase
 
-## Setup
+### Setup Supabase
 
-### 1. Configure Supabase
+Buat project Supabase, lalu jalankan [`supabase/schema.sql`](supabase/schema.sql)
+di Supabase SQL Editor. Script ini menyiapkan database dan aturan akses data.
 
-Create a Supabase project, then run [`supabase/schema.sql`](supabase/schema.sql)
-in the Supabase SQL Editor. The script creates the tables, triggers, default
-accounts/categories, and RLS policies.
+### Menjalankan project
 
-### 2. Install dependencies
+Salin `.env.example` menjadi `.env`, lalu isi nilai konfigurasi lokal. File
+`.env` tidak boleh di-commit.
 
 ```bash
 flutter pub get
-```
-
-### 3. Run code generation (after editing Freezed entities)
-
-```bash
-flutter pub run build_runner build --delete-conflicting-outputs
-```
-
-### 4. Run the app
-
-Copy `.env.example` to `.env` at the project root. The real `.env` is ignored
-by Git and must never be committed. Fill it in:
-
-```env
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-GOOGLE_WEB_CLIENT_ID=your-web-client-id   # optional, for Google Sign-In
-```
-
-Then run:
-
-```bash
 flutter run --dart-define-from-file=.env
 ```
 
-`GOOGLE_WEB_CLIENT_ID` is optional; provide the Web OAuth client ID from Google
-Cloud Console to enable Google Sign-In. Keep Supabase email confirmation
-enabled if you want users to verify their email after registration.
-
-Credentials are never hardcoded — they only enter the build via `.env` +
-`--dart-define-from-file` (see `lib/core/config/app_config.dart`).
-
-### 5. (Optional) Google Sign-In
-
-Create the required Web, Android, and iOS OAuth clients in Google Cloud
-Console, enable the Google provider in Supabase, and configure the native
-client IDs/URL schemes in the platform projects.
-
-## Verification
+Untuk memeriksa project:
 
 ```bash
-flutter analyze   # static analysis (0 issues expected)
-flutter test      # unit tests: OCR parser, formatters, Result, models
+flutter analyze
+flutter test
 ```
 
-## Architecture
+### Release Android
 
-Clean Architecture + Feature-First structure with Riverpod state management.
+Workflow [release.yml](.github/workflows/release.yml) membuat APK dan GitHub
+Release saat tag versi seperti `v1.0.0` dipush. Repository Secrets yang
+diperlukan: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, dan `GOOGLE_WEB_CLIENT_ID`
+(optional).
 
-```
-lib/
-├── core/          # config, constants, errors, network, theme, router, shared widgets
-└── features/
-    ├── auth/          # Supabase email/password auth
-    ├── accounts/      # wallets & balances (updated by DB triggers)
-    ├── categories/    # income/expense categories
-    ├── transactions/  # CRUD + offline queue (pending_sync)
-    ├── scanner/       # ML Kit OCR + regex parser (GoPay/ShopeePay/DANA/QRIS/mBanking/struk)
-    └── dashboard/     # balance summary + category breakdown charts
-```
-
-### Offline-first behavior
-
-- Scanning runs fully on-device (ML Kit) and works without internet.
-- Transactions created offline are queued locally (`pending_sync` badge in
-  the UI) and pushed to Supabase automatically when connectivity returns.
-- Reads fall back to a locally cached copy when offline.
-
-### Security notes
-
-- Only `SUPABASE_URL`, the publishable/anon key, and the optional Google Web
-  client ID belong in the client environment. Never use a Supabase
-  `service_role`/secret key in the app.
-- The local `.env` and internal `/agent` notes are excluded by `.gitignore`.
-- RLS policies in `supabase/schema.sql` are part of the security boundary;
-  review them before changing access rules.
-
-### Notes
-
-- The Inter font family is referenced by the theme but not bundled; add the
-  font files under `assets/fonts/` and register them in `pubspec.yaml` if the
-  exact typography is needed.
-- Saldo akun tidak pernah ditulis langsung oleh Dart — semua update saldo
-  dilakukan oleh trigger database (`update_account_balance`).
-
-## Versioning
-
-The app version is maintained in `pubspec.yaml` using `major.minor.patch+build`.
-User-facing changes are recorded in GitHub Release notes. To mark a release in Git:
-
-```bash
-git tag -a v1.0.0 -m "Initial release"
-git push origin v1.0.0
-```
-
-GitHub will then show the tag as a release starting point.
-
-### Downloadable APK releases
-
-The workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml)
-builds an Android APK and attaches it to a GitHub Release whenever a `v*.*.*`
-tag is pushed. Before the first release, add these repository secrets under
-**Settings → Secrets and variables → Actions**:
-
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `GOOGLE_WEB_CLIENT_ID` (optional)
-
-Then push the branch and tag:
-
-```bash
-git push -u origin main
-git push origin v1.0.0
-```
-
-Users can download the APK from the repository's **Releases** page.
-
-## Progress
-
-The initial implementation is complete. Release notes are maintained in the GitHub Releases page.
+</details>
