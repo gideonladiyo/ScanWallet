@@ -129,6 +129,26 @@ git push origin v1.0.0
 
 GitHub will then show the tag as a release starting point.
 
+### Downloadable APK releases
+
+The workflow in [`.github/workflows/release.yml`](.github/workflows/release.yml)
+builds an Android APK and attaches it to a GitHub Release whenever a `v*.*.*`
+tag is pushed. Before the first release, add these repository secrets under
+**Settings → Secrets and variables → Actions**:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `GOOGLE_WEB_CLIENT_ID` (optional)
+
+Then push the branch and tag:
+
+```bash
+git push -u origin main
+git push origin v1.0.0
+```
+
+Users can download the APK from the repository's **Releases** page.
+
 ## Progress
 
 The initial implementation is complete; see [`CHANGELOG.md`](CHANGELOG.md) for
