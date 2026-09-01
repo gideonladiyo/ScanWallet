@@ -1,7 +1,7 @@
 name: scan_wallet
 description: Offline-first personal finance tracking with on-device receipt OCR.
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.1.0+2
 
 environment:
   sdk: ^3.8.1
