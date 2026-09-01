@@ -119,8 +119,7 @@ lib/
 ## Versioning
 
 The app version is maintained in `pubspec.yaml` using `major.minor.patch+build`.
-User-facing changes are recorded in [`CHANGELOG.md`](CHANGELOG.md). To mark a
-release in Git:
+User-facing changes are recorded in GitHub Release notes. To mark a release in Git:
 
 ```bash
 git tag -a v1.0.0 -m "Initial release"
